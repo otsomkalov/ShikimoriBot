@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  shikimoritelegrambot:
+    image: ${DOCKER_REGISTRY}shikimoritelegrambot
+    build:
+      context: .
+      dockerfile: ShikimoriTelegramBot/Dockerfile
