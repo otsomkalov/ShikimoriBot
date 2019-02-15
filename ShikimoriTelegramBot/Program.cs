@@ -23,7 +23,7 @@ namespace ShikimoriTelegramBot
 
         private static async Task Main(string[] args)
         {
-            if (args.Length == 0) throw new ArgumentNullException("Token");
+            if (args.Length == 0) throw new ArgumentNullException("Token cannot be null");
 
             _bot = new TelegramBotClient(args[0]);
 
@@ -79,7 +79,9 @@ namespace ShikimoriTelegramBot
         {
             return $"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>\n" +
                    $"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}\n" +
-                   $"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, {anime.Episodes} эп.\n";
+                   $"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, " +
+                   $"{(anime.EpisodesAired == 0 ? "" : $"{anime.EpisodesAired.ToString()}/")}" +
+                   $"{(anime.Episodes == 0 ? "?" : anime.Episodes.ToString())} эп.\n";
         }
     }
 }
