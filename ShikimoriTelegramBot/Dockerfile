@@ -1,7 +1,7 @@
-FROM microsoft/dotnet:2.2-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/runtime:latest AS base
 WORKDIR /app
 
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:latest AS build
 WORKDIR /src
 COPY ShikimoriTelegramBot/ShikimoriTelegramBot.csproj ShikimoriTelegramBot/
 RUN dotnet restore ShikimoriTelegramBot/ShikimoriTelegramBot.csproj

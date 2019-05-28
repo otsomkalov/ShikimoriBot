@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ShikimoriNET;
 using ShikimoriNET.Helpers;
@@ -23,7 +24,12 @@ namespace ShikimoriTelegramBot
 
         private static async Task Main(string[] args)
         {
-            if (args.Length == 0) throw new ArgumentNullException("Token cannot be null");
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Token cannot be null");
+
+                return;
+            }
 
             _bot = new TelegramBotClient(args[0]);
 
@@ -64,10 +70,15 @@ namespace ShikimoriTelegramBot
             var response = animes.Select(anime =>
             {
                 var resultArticle =
-                    new InlineQueryResultArticle(anime.Id.ToString(),
-                            anime.Russian ?? anime.Name,
-                            new InputTextMessageContent(GetMarkdown(anime)) {ParseMode = ParseMode.Html})
-                        {ThumbUrl = Url + anime.Image.Preview, Description = anime.Name};
+                    new InlineQueryResultArticle(anime.Id.ToString(), anime.Russian ?? anime.Name,
+                        new InputTextMessageContent(GetMarkdown(anime))
+                        {
+                            ParseMode = ParseMode.Html
+                        })
+                    {
+                        ThumbUrl = Url + anime.Image.Preview,
+                        Description = anime.Name
+                    };
 
                 return resultArticle;
             });
@@ -77,11 +88,13 @@ namespace ShikimoriTelegramBot
 
         private static string GetMarkdown(Anime anime)
         {
-            return $"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>\n" +
-                   $"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}\n" +
-                   $"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, " +
-                   $"{(anime.EpisodesAired == 0 ? "" : $"{anime.EpisodesAired.ToString()}/")}" +
-                   $"{(anime.Episodes == 0 ? "?" : anime.Episodes.ToString())} эп.\n";
+            return new StringBuilder()
+                .AppendLine($"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
+                .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
+                .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, ")
+                .AppendLine($"{(anime.EpisodesAired == 0 ? "" : $"{anime.EpisodesAired.ToString()}/")}")
+                .AppendLine($"{(anime.Episodes == 0 ? "?" : anime.Episodes.ToString())} эп.\n")
+                .ToString();
         }
     }
 }
