@@ -92,8 +92,8 @@ namespace ShikimoriTelegramBot
                 .AppendLine($"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
                 .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
                 .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, ")
-                .AppendLine($"{(anime.EpisodesAired == 0 ? "" : $"{anime.EpisodesAired.ToString()}/")}")
-                .AppendLine($"{(anime.Episodes == 0 ? "?" : anime.Episodes.ToString())} эп.\n")
+                .Append($"{(anime.EpisodesAired == 0 ? "" : $"{anime.EpisodesAired.ToString()}/")}")
+                .AppendLine($"{(anime.Episodes == 0 ? "?" : anime.Episodes.ToString())} эп.")
                 .ToString();
         }
     }
