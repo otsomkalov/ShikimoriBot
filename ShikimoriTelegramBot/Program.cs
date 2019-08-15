@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShikimoriNET;
+using ShikimoriNET.Enums;
 using ShikimoriNET.Helpers;
 using ShikimoriNET.Models.Anime;
 using ShikimoriNET.Params.Anime;
@@ -88,13 +89,25 @@ namespace ShikimoriTelegramBot
 
         private static string GetMarkdown(Anime anime)
         {
-            return new StringBuilder()
+            var markdownStringBuilder = new StringBuilder()
                 .AppendLine($"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
                 .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
-                .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, ")
-                .Append($"{(anime.EpisodesAired == 0 ? "" : $"{anime.EpisodesAired.ToString()}/")}")
-                .AppendLine($"{(anime.Episodes == 0 ? "?" : anime.Episodes.ToString())} эп.")
-                .ToString();
+                .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, ");
+
+            switch (anime.Status)
+            {
+                case Status.Released:
+                    markdownStringBuilder.Append($"{anime.Episodes.ToString()} эп.");
+
+                    break;
+
+                case Status.Ongoing:
+                    markdownStringBuilder.Append($"{anime.EpisodesAired.ToString()}/${anime.Episodes.ToString()}");
+
+                    break;
+            }
+
+            return markdownStringBuilder.ToString();
         }
     }
 }
