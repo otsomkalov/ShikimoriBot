@@ -92,17 +92,17 @@ namespace ShikimoriTelegramBot
             var markdownStringBuilder = new StringBuilder()
                 .AppendLine($"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
                 .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
-                .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}, ");
+                .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
 
             switch (anime.Status)
             {
                 case Status.Released:
-                    markdownStringBuilder.Append($"{anime.Episodes.ToString()} эп.");
+                    markdownStringBuilder.Append($", {anime.Episodes.ToString()} эп.");
 
                     break;
 
                 case Status.Ongoing:
-                    markdownStringBuilder.Append($"{anime.EpisodesAired.ToString()}/${anime.Episodes.ToString()}");
+                    markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/${anime.Episodes.ToString()}");
 
                     break;
             }
