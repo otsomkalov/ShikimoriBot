@@ -92,7 +92,7 @@ namespace ShikimoriTelegramBot
             var markdownStringBuilder = new StringBuilder()
                 .AppendLine($"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
                 .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
-                .AppendLine($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
+                .Append($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
 
             switch (anime.Status)
             {
