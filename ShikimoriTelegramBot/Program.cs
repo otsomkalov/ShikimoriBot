@@ -2,24 +2,26 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 using ShikimoriNET;
 using ShikimoriNET.Enums;
 using ShikimoriNET.Helpers;
 using ShikimoriNET.Models.Anime;
 using ShikimoriNET.Params.Anime;
+using ShikimoriTelegramBot.Helpers;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ShikimoriTelegramBot
 {
-    internal static class Program
+    internal class Program
     {
         private const string Url = "https://shikimori.org";
         private static TelegramBotClient _bot;
+        private static ILogger _logger;
 
         private static readonly ShikimoriApi Api = new ShikimoriApi();
 
@@ -32,59 +34,75 @@ namespace ShikimoriTelegramBot
                 return;
             }
 
+            _logger = Configuration.ConfigureLogger();
+
             _bot = new TelegramBotClient(args[0]);
 
             _bot.OnInlineQuery += OnInlineQueryAsync;
             _bot.OnMessage += OnOnMessageAsync;
             _bot.StartReceiving();
 
-            Console.WriteLine("Bot started");
+            _logger.Information("Bot started");
 
-            while (true) await Task.Delay(int.MaxValue);
+            await Task.Delay(-1);
         }
 
         private static async void OnOnMessageAsync(object sender, MessageEventArgs messageEventArgs)
         {
-            var message = messageEventArgs.Message;
+            try
+            {
+                var message = messageEventArgs.Message;
 
-            if (message.Text.StartsWith("/start"))
-                await _bot.SendTextMessageAsync(new ChatId(message.From.Id),
-                    "С помощью этого бота можно искать и делиться аниме. Он работает в любом чате, просто " +
-                    "напишите @ShikiAnimeBot в поле для сообщения",
-                    replyMarkup: new InlineKeyboardMarkup(new[]
-                    {
-                        InlineKeyboardButton.WithSwitchInlineQueryCurrentChat("🔍 Поиск аниме"),
-                        InlineKeyboardButton.WithSwitchInlineQuery("🔗 Найти и поделиться аниме")
-                    }));
+                _logger.Information("Got message: {@Message}", message);
+
+                if (message.Text.StartsWith("/start"))
+                    await _bot.SendTextMessageAsync(new ChatId(message.From.Id),
+                        "С помощью этого бота можно искать и делиться аниме. Он работает в любом чате, просто " +
+                        "напишите @ShikiAnimeBot в поле для сообщения",
+                        replyMarkup: KeyboardHelpers.GetStartKeyboardMarkup());
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error during processing message");
+            }
         }
 
         private static async void OnInlineQueryAsync(object sender, InlineQueryEventArgs inlineQueryEventArgs)
         {
-            var inlineQuery = inlineQueryEventArgs.InlineQuery;
-
-            var animes = await Api.Anime.SearchAsync(new SearchParams
+            try
             {
-                Search = inlineQuery.Query,
-                Limit = 10
-            });
+                var inlineQuery = inlineQueryEventArgs.InlineQuery;
 
-            var response = animes.Select(anime =>
-            {
-                var resultArticle =
-                    new InlineQueryResultArticle(anime.Id.ToString(), anime.Russian ?? anime.Name,
-                        new InputTextMessageContent(GetMarkdown(anime))
+                _logger.Information("Got inline query {@InlineQuery}", inlineQuery);
+
+                var animes = await Api.Anime.SearchAsync(new SearchParams
+                {
+                    Search = inlineQuery.Query,
+                    Limit = 10
+                });
+
+                var response = animes.Select(anime =>
+                {
+                    var resultArticle =
+                        new InlineQueryResultArticle(anime.Id.ToString(), anime.Russian ?? anime.Name,
+                            new InputTextMessageContent(GetMarkdown(anime))
+                            {
+                                ParseMode = ParseMode.Html
+                            })
                         {
-                            ParseMode = ParseMode.Html
-                        })
-                    {
-                        ThumbUrl = Url + anime.Image.Preview,
-                        Description = anime.Name
-                    };
+                            ThumbUrl = Url + anime.Image.Preview,
+                            Description = anime.Name
+                        };
 
-                return resultArticle;
-            });
+                    return resultArticle;
+                });
 
-            await _bot.AnswerInlineQueryAsync(inlineQuery.Id, response);
+                await _bot.AnswerInlineQueryAsync(inlineQuery.Id, response);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error during processing inline query");
+            }
         }
 
         private static string GetMarkdown(Anime anime)
