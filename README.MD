@@ -5,7 +5,7 @@ Telegram Bot to explore [Shikimori](https://shikimori.org/).
 ## Getting Started
 ### Prerequisites
 
-- [.NET Core 2.2](https://dotnet.microsoft.com/download) or higher
+- [.NET Core 3.0](https://dotnet.microsoft.com/download) or higher
 
 ### Installing
 
@@ -18,8 +18,7 @@ Telegram Bot to explore [Shikimori](https://shikimori.org/).
 1. Clone project
 2. Run in folder
 ```
-docker-compose build
-docker run -d shikimoritelegrambot <telegram_bot_token>
+docker-compose run -d shikimoritelegrambot <telegram_bot_token>
 ```
 or go to **ShikimoriTelegramBot** folder and run:
 ```

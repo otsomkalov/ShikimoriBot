@@ -6,6 +6,8 @@ namespace ShikimoriTelegramBot
 {
     public class Configuration
     {
+        public const string ShikimoriUrl = "https://shikimori.org";
+
         public static Logger ConfigureLogger()
         {
             return new LoggerConfiguration()

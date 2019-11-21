@@ -1,25 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using ShikimoriNET;
-using ShikimoriNET.Enums;
-using ShikimoriNET.Helpers;
-using ShikimoriNET.Models.Anime;
 using ShikimoriNET.Params.Anime;
 using ShikimoriTelegramBot.Helpers;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
 
 namespace ShikimoriTelegramBot
 {
     internal class Program
     {
-        private const string Url = "https://shikimori.org";
         private static TelegramBotClient _bot;
         private static ILogger _logger;
 
@@ -81,21 +74,7 @@ namespace ShikimoriTelegramBot
                     Limit = 10
                 });
 
-                var response = animes.Select(anime =>
-                {
-                    var resultArticle =
-                        new InlineQueryResultArticle(anime.Id.ToString(), anime.Russian ?? anime.Name,
-                            new InputTextMessageContent(GetMarkdown(anime))
-                            {
-                                ParseMode = ParseMode.Html
-                            })
-                        {
-                            ThumbUrl = Url + anime.Image.Preview,
-                            Description = anime.Name
-                        };
-
-                    return resultArticle;
-                });
+                var response = animes.Select(InlineQueryResultArticleHelpers.GetInlineQueryResultArticleForAnime);
 
                 await _bot.AnswerInlineQueryAsync(inlineQuery.Id, response);
             }
@@ -103,29 +82,6 @@ namespace ShikimoriTelegramBot
             {
                 _logger.Error(e, "Error during processing inline query");
             }
-        }
-
-        private static string GetMarkdown(Anime anime)
-        {
-            var markdownStringBuilder = new StringBuilder()
-                .AppendLine($"<a href=\"{Url + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
-                .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
-                .Append($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
-
-            switch (anime.Status)
-            {
-                case Status.Released:
-                    markdownStringBuilder.Append($", {anime.Episodes.ToString()} эп.");
-
-                    break;
-
-                case Status.Ongoing:
-                    markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/${anime.Episodes.ToString()}");
-
-                    break;
-            }
-
-            return markdownStringBuilder.ToString();
         }
     }
 }
