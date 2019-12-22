@@ -2,7 +2,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ShikimoriTelegramBot.Helpers
 {
-    public static class KeyboardHelpers
+    public static class InlineKeyboardHelpers
     {
         public static InlineKeyboardMarkup GetStartKeyboardMarkup()
         {

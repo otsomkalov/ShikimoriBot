@@ -10,7 +10,7 @@ namespace ShikimoriTelegramBot.Helpers
         public static string GetMarkdown(Anime anime)
         {
             var markdownStringBuilder = new StringBuilder()
-                .AppendLine($"<a href=\"{Configuration.ShikimoriUrl + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
+                .AppendLine($"<a href=\"{Settings.ShikimoriUrl + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
                 .AppendLine($"Тип: {AttributeHelpers.GetDescriptionAttributeData(anime.Kind)}")
                 .Append($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
 
@@ -22,7 +22,7 @@ namespace ShikimoriTelegramBot.Helpers
                     break;
 
                 case Status.Ongoing:
-                    markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/${anime.Episodes.ToString()}");
+                    markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/{anime.Episodes.ToString()}");
 
                     break;
             }

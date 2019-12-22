@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace ShikimoriTelegramBot
 {
-    public class Configuration
+    public class Settings
     {
         public const string ShikimoriUrl = "https://shikimori.org";
 
@@ -15,7 +15,6 @@ namespace ShikimoriTelegramBot
                 .Destructure.ByTransforming<Chat>(GetChatTransformation)
                 .Destructure.ByTransforming<Message>(GetMessageTransformation)
                 .Destructure.ByTransforming<InlineQuery>(GetInlineQueryTransformation)
-                .WriteTo.File("./log/ShikimoriTelegramBot.log")
                 .WriteTo.Console()
                 .CreateLogger();
         }

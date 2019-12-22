@@ -10,7 +10,7 @@ namespace ShikimoriTelegramBot.Helpers
             return new InlineQueryResultArticle(anime.Id.ToString(), anime.Russian ?? anime.Name,
                 InputTextMessageContentHelpers.GetInputTextMessageContent(anime))
             {
-                ThumbUrl = Configuration.ShikimoriUrl + anime.Image.Preview,
+                ThumbUrl = Settings.ShikimoriUrl + anime.Image.Preview,
                 Description = anime.Name
             };
         }
