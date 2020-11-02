@@ -44,33 +44,6 @@ namespace ShikimoriTelegramBot
                     await _inlineQueryService.HandleAsync(update.InlineQuery);
 
                     break;
-
-                case UpdateType.ChosenInlineResult:
-                    break;
-
-                case UpdateType.CallbackQuery:
-                    break;
-
-                case UpdateType.EditedMessage:
-                    break;
-
-                case UpdateType.ChannelPost:
-                    break;
-
-                case UpdateType.EditedChannelPost:
-                    break;
-
-                case UpdateType.ShippingQuery:
-                    break;
-
-                case UpdateType.PreCheckoutQuery:
-                    break;
-
-                case UpdateType.Poll:
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
             return new OkResult();

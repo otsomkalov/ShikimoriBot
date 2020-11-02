@@ -2,8 +2,6 @@
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Serilog;
 using ShikimoriNET;
 using ShikimoriTelegramBot;
 using ShikimoriTelegramBot.Services;
@@ -28,7 +26,6 @@ namespace ShikimoriTelegramBot
             builder.Services
                 .AddSingleton(bot)
                 .AddSingleton(api)
-                .AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(Settings.ConfigureLogger()))
                 .AddScoped<IMessageService, MessageService>()
                 .AddScoped<IInlineQueryService, InlineQueryService>();
         }
