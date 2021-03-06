@@ -7,6 +7,7 @@ using Telegram.Bot.Types.Enums;
 namespace Bot.Controllers
 {
     [ApiController]
+    [Route("/update")]
     public class UpdateFunctions : ControllerBase
     {
         private readonly IInlineQueryService _inlineQueryService;
@@ -18,6 +19,7 @@ namespace Bot.Controllers
             _inlineQueryService = inlineQueryService;
         }
 
+        [HttpPost]
         public async Task<IActionResult> ProcessUpdateAsync(Update update)
         {
             switch (update.Type)
