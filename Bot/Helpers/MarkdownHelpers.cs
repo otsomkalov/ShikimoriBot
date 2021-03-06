@@ -3,7 +3,7 @@ using ShikimoriNET.Enums;
 using ShikimoriNET.Helpers;
 using ShikimoriNET.Models.Anime;
 
-namespace ShikimoriTelegramBot.Helpers
+namespace Bot.Helpers
 {
     public static class MarkdownHelpers
     {
@@ -19,11 +19,13 @@ namespace ShikimoriTelegramBot.Helpers
             switch (anime.Status)
             {
                 case Status.Released:
+
                     markdownStringBuilder.Append($", {anime.Episodes.ToString()} эп.");
 
                     break;
 
                 case Status.Ongoing:
+
                     markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/{anime.Episodes.ToString()}");
 
                     break;

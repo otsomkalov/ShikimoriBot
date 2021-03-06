@@ -1,6 +1,6 @@
-namespace ShikimoriTelegramBot
+namespace Bot
 {
-    public class Settings
+    public static class Settings
     {
         public const string ShikimoriUrl = "https://shikimori.org";
     }

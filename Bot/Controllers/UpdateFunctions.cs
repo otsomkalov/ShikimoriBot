@@ -1,17 +1,13 @@
-using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Bot.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Newtonsoft.Json;
-using ShikimoriTelegramBot.Services.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace ShikimoriTelegramBot
+namespace Bot.Controllers
 {
-    public class UpdateFunctions
+    [ApiController]
+    public class UpdateFunctions : ControllerBase
     {
         private readonly IInlineQueryService _inlineQueryService;
         private readonly IMessageService _messageService;
@@ -22,25 +18,22 @@ namespace ShikimoriTelegramBot
             _inlineQueryService = inlineQueryService;
         }
 
-        [FunctionName(nameof(ProcessUpdateAsync))]
-        public async Task<IActionResult> ProcessUpdateAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "update")]
-            string updateString,
-            HttpRequest request)
+        public async Task<IActionResult> ProcessUpdateAsync(Update update)
         {
-            var update = JsonConvert.DeserializeObject<Update>(updateString);
-
             switch (update.Type)
             {
                 case UpdateType.Unknown:
+
                     break;
 
                 case UpdateType.Message:
+
                     await _messageService.HandleAsync(update.Message);
 
                     break;
 
                 case UpdateType.InlineQuery:
+
                     await _inlineQueryService.HandleAsync(update.InlineQuery);
 
                     break;

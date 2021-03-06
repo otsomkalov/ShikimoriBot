@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bot.Helpers;
+using Bot.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using ShikimoriNET;
 using ShikimoriNET.Params.Anime;
-using ShikimoriTelegramBot.Helpers;
-using ShikimoriTelegramBot.Services.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace ShikimoriTelegramBot.Services
+namespace Bot.Services
 {
     public class InlineQueryService : IInlineQueryService
     {
