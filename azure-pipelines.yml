@@ -1,51 +1,36 @@
-# .NET Core Function App to Windows on Azure
-# Build a .NET Core function app and deploy it to Azure as a Windows function App.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- master
-
+  branches:
+    include:
+      - master
+ 
+pool:
+  vmImage: 'ubuntu-latest'
+ 
 variables:
-  # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: '3c2d8008-4969-4765-b21a-4cfc5d20617e'
-
-  # Function app name
-  functionAppName: 'shikimoribot'
-
-  # Agent VM image name
-  vmImageName: 'vs2017-win2016'
-
-  # Working Directory
-  workingDirectory: '**'
-
+  ImageName: 'infinitu1327/shikimoribot'
+ 
 stages:
 - stage: Build
-  displayName: Build stage
-
-  jobs:
+  displayName: Build image
+  jobs:  
   - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-
+    displayName: Build and push the Docker image
     steps:
-    - task: DotNetCoreCLI@2
-      displayName: Build
+    - task: Docker@1
+      displayName: 'Build and push the Docker image'
       inputs:
-        command: 'build'
-        projects: |
-          $(workingDirectory)/*.csproj
-        arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
-
-    - task: ArchiveFiles@2
-      displayName: 'Archive files'
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'DockerHub'
+        command: 'Build an image'
+        dockerFile: '**/Dockerfile'
+        imageName: '$(ImageName)'
+        includeLatestTag: true
+        useDefaultContext: false
+        buildContext: '.'
+    - task: Docker@1
+      displayName: 'Push the Docker image to Dockerhub'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
-        includeRootFolder: false
-        archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-        replaceExistingArchive: true
-
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-      artifact: drop
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'DockerHub'
+        command: 'Push an image'
+        imageName: '$(ImageName)'
