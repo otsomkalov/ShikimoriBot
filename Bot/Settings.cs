@@ -1,7 +1,6 @@
-namespace Bot
+namespace Bot;
+
+public static class Settings
 {
-    public static class Settings
-    {
-        public const string ShikimoriUrl = "https://shikimori.org";
-    }
+    public const string ShikimoriUrl = "https://shikimori.org";
 }

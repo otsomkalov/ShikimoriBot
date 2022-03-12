@@ -3,35 +3,34 @@ using ShikimoriNET.Enums;
 using ShikimoriNET.Helpers;
 using ShikimoriNET.Models.Anime;
 
-namespace Bot.Helpers
+namespace Bot.Helpers;
+
+public static class MarkdownHelpers
 {
-    public static class MarkdownHelpers
+    public static string GetMarkdown(Anime anime)
     {
-        public static string GetMarkdown(Anime anime)
+        var kind = AttributeHelpers.GetDescriptionAttributeData(anime.Kind) ?? "?";
+
+        var markdownStringBuilder = new StringBuilder()
+            .AppendLine($"<a href=\"{Settings.ShikimoriUrl + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
+            .AppendLine($"Тип: {kind}")
+            .Append($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
+
+        switch (anime.Status)
         {
-            var kind = AttributeHelpers.GetDescriptionAttributeData(anime.Kind) ?? "?";
+            case Status.Released:
 
-            var markdownStringBuilder = new StringBuilder()
-                .AppendLine($"<a href=\"{Settings.ShikimoriUrl + anime.Url}\">{anime.Russian ?? anime.Name}</a>")
-                .AppendLine($"Тип: {kind}")
-                .Append($"Статус: {AttributeHelpers.GetDescriptionAttributeData(anime.Status)}");
+                markdownStringBuilder.Append($", {anime.Episodes.ToString()} эп.");
 
-            switch (anime.Status)
-            {
-                case Status.Released:
+                break;
 
-                    markdownStringBuilder.Append($", {anime.Episodes.ToString()} эп.");
+            case Status.Ongoing:
 
-                    break;
+                markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/{anime.Episodes.ToString()}");
 
-                case Status.Ongoing:
-
-                    markdownStringBuilder.Append($", {anime.EpisodesAired.ToString()}/{anime.Episodes.ToString()}");
-
-                    break;
-            }
-
-            return markdownStringBuilder.ToString();
+                break;
         }
+
+        return markdownStringBuilder.ToString();
     }
 }

@@ -1,49 +1,43 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Bot.Helpers;
 using Bot.Services.Interfaces;
-using Microsoft.Extensions.Logging;
 using ShikimoriNET;
-using ShikimoriNET.Params.Anime;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Bot.Services
+namespace Bot.Services;
+
+public class InlineQueryService : IInlineQueryService
 {
-    public class InlineQueryService : IInlineQueryService
+    private readonly ShikimoriApi _api;
+    private readonly ITelegramBotClient _bot;
+    private readonly ILogger<InlineQueryService> _logger;
+
+    public InlineQueryService(ITelegramBotClient bot, ShikimoriApi api, ILogger<InlineQueryService> logger)
     {
-        private readonly ShikimoriApi _api;
-        private readonly ITelegramBotClient _bot;
-        private readonly ILogger<InlineQueryService> _logger;
+        _bot = bot;
+        _api = api;
+        _logger = logger;
+    }
 
-        public InlineQueryService(ITelegramBotClient bot, ShikimoriApi api, ILogger<InlineQueryService> logger)
+    public async Task HandleAsync(InlineQuery inlineQuery)
+    {
+        if (!string.IsNullOrEmpty(inlineQuery.Query))
         {
-            _bot = bot;
-            _api = api;
-            _logger = logger;
-        }
-
-        public async Task HandleAsync(InlineQuery inlineQuery)
-        {
-            if (!string.IsNullOrEmpty(inlineQuery.Query))
+            var animes = await _api.Anime.SearchAsync(new()
             {
-                var animes = await _api.Anime.SearchAsync(new SearchParams
-                {
-                    Search = inlineQuery.Query,
-                    Limit = 10
-                });
+                Search = inlineQuery.Query,
+                Limit = 10
+            });
 
-                var response = animes.Select(InlineQueryResultArticleHelpers.GetInlineQueryResultArticleForAnime);
+            var response = animes.Select(InlineQueryResultArticleHelpers.GetInlineQueryResultArticleForAnime);
 
-                try
-                {
-                    await _bot.AnswerInlineQueryAsync(inlineQuery.Id, response);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Error during AnswerInlineQueryAsync");
-                }
+            try
+            {
+                await _bot.AnswerInlineQueryAsync(inlineQuery.Id, response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error during AnswerInlineQueryAsync");
             }
         }
     }

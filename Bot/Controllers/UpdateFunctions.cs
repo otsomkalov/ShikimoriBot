@@ -1,47 +1,45 @@
-using System.Threading.Tasks;
 using Bot.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Bot.Controllers
+namespace Bot.Controllers;
+
+[ApiController]
+[Route("/update")]
+public class UpdateFunctions : ControllerBase
 {
-    [ApiController]
-    [Route("/update")]
-    public class UpdateFunctions : ControllerBase
+    private readonly IInlineQueryService _inlineQueryService;
+    private readonly IMessageService _messageService;
+
+    public UpdateFunctions(IMessageService messageService, IInlineQueryService inlineQueryService)
     {
-        private readonly IInlineQueryService _inlineQueryService;
-        private readonly IMessageService _messageService;
+        _messageService = messageService;
+        _inlineQueryService = inlineQueryService;
+    }
 
-        public UpdateFunctions(IMessageService messageService, IInlineQueryService inlineQueryService)
+    [HttpPost]
+    public async Task<IActionResult> ProcessUpdateAsync(Update update)
+    {
+        switch (update.Type)
         {
-            _messageService = messageService;
-            _inlineQueryService = inlineQueryService;
+            case UpdateType.Unknown:
+
+                break;
+
+            case UpdateType.Message:
+
+                await _messageService.HandleAsync(update.Message);
+
+                break;
+
+            case UpdateType.InlineQuery:
+
+                await _inlineQueryService.HandleAsync(update.InlineQuery);
+
+                break;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ProcessUpdateAsync(Update update)
-        {
-            switch (update.Type)
-            {
-                case UpdateType.Unknown:
-
-                    break;
-
-                case UpdateType.Message:
-
-                    await _messageService.HandleAsync(update.Message);
-
-                    break;
-
-                case UpdateType.InlineQuery:
-
-                    await _inlineQueryService.HandleAsync(update.InlineQuery);
-
-                    break;
-            }
-
-            return new OkResult();
-        }
+        return new OkResult();
     }
 }
